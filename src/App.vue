@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <i-ep-menu />
+  <TextIcon icon="document" text="菜单" />
 </template>
 
 <style scoped></style>

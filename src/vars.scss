@@ -1,0 +1,13 @@
+:root {
+  --pri-text-color: #000;
+  --sec-text-color: #111;
+  --thr-text-color: #222;
+}
+
+html[class="dark"] {
+  --bg-color: #333;
+}
+
+html[class="light"] {
+  --bg-color: #fff;
+}

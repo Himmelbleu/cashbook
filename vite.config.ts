@@ -1,16 +1,7 @@
-// node
-import { resolve } from "path";
-
 // vite
 import vue from "@vitejs/plugin-vue";
 import { defineConfig } from "vite";
-// element plus
-import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import AutoImport from "unplugin-auto-import/vite";
-import Components from "unplugin-vue-components/vite";
-// icons
-import Icons from "unplugin-icons/vite";
-import IconsResolver from "unplugin-icons/resolver";
+import vueJsx from "@vitejs/plugin-vue-jsx";
 
 // unocss
 import Unocss from "unocss/vite";
@@ -21,6 +12,7 @@ import transformerDirective from "@unocss/transformer-directives";
 export default defineConfig({
   plugins: [
     vue(),
+    vueJsx(),
     Unocss({
       rules,
       shortcuts,
@@ -30,41 +22,12 @@ export default defineConfig({
         })
       ],
       presets: [presetAttributify({}), presetUno()]
-    }),
-    AutoImport({
-      imports: ["vue"],
-      resolvers: [
-        ElementPlusResolver(),
-        IconsResolver({
-          prefix: "Icon"
-        })
-      ]
-    }),
-    Components({
-      resolvers: [
-        ElementPlusResolver(),
-        IconsResolver({
-          enabledCollections: ["ep"]
-        })
-      ],
-      dirs: ["./src/components/**"]
-    }),
-    Icons({
-      autoInstall: true
     })
   ],
-  resolve: {
-    alias: [
-      {
-        find: "@",
-        replacement: resolve(__dirname, "src")
-      }
-    ]
-  },
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use "@/vars.scss" as *;`
+        additionalData: `@use "./src/vars.scss" as *;`
       }
     }
   }
