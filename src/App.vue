@@ -1,5 +1,7 @@
-<script setup></script>
+<script setup lang="ts"></script>
 
-<template></template>
+<template>
+  <i-ep-menu />
+</template>
 
 <style scoped></style>
