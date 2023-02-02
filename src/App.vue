@@ -51,6 +51,7 @@ function realTotal(current: Bill, last: Bill) {
                 <div class="f-c-c mt-2">
                   <UpdateBill :bill="bill" :index="billIndex" />
                 </div>
+                <div class="f-c-c mt-2">删除账单</div>
               </div>
             </template>
           </el-dropdown>
@@ -70,7 +71,19 @@ function realTotal(current: Bill, last: Bill) {
           <div class="fsz-0.9 w-45% px-4">{{ outlay.text }}</div>
           <div class="fsz-0.9 w-25% px-4">{{ outlay.cost }}</div>
           <div class="fsz-0.9 w-15%">
-            <UpdateOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
+            <el-dropdown trigger="click">
+              <span class="el-dropdown-link">
+                操作<el-icon class="el-icon--right"><arrow-down /></el-icon>
+              </span>
+              <template #dropdown>
+                <div class="my-2">
+                  <div class="f-c-c">
+                    <UpdateOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
+                  </div>
+                  <div class="f-c-c mt-2">删除开支</div>
+                </div>
+              </template>
+            </el-dropdown>
           </div>
         </div>
       </div>

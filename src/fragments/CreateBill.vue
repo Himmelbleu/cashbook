@@ -2,10 +2,11 @@
 import { useStorage } from "@vueuse/core";
 import { Coin } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
+import { Bill } from "../types/DataType";
 
-const bills = useStorage<any>("bills", []);
+const bills = useStorage<Bill[]>("bills", []);
 const formData = reactive(<{ month: number; total: number }>{
-  month: 0,
+  month: 1,
   total: 1000
 });
 const dialogVisible = ref(false);
@@ -28,39 +29,62 @@ const rules = reactive<FormRules>({
 });
 const form = ref<FormInstance>();
 
-function openCreateDialog() {
-  dialogVisible.value = !dialogVisible.value;
-  if (bills.value.length <= 12 && bills.value.length >= 0) {
-    let mon = bills.value.length;
-    formData.month = ++mon;
-  }
-}
-
 const onSubmit = async (formEl: FormInstance | undefined) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
     if (valid) {
-      bills.value.push(formData);
-      ElMessage({
-        type: "success",
-        message: "创建成功！"
-      });
-      dialogVisible.value = !dialogVisible.value;
+      let isExistBill = true;
+
+      if (bills.value.length) {
+        bills.value.forEach(elem => {
+          if (elem.month === formData.month) {
+            isExistBill = false;
+          }
+        });
+      }
+
+      if (isExistBill) {
+        bills.value.push(formData);
+        ElMessage({
+          type: "success",
+          message: "创建成功！"
+        });
+        dialogVisible.value = !dialogVisible.value;
+      } else {
+        ElMessage({
+          type: "error",
+          message: "已经有该月的账单，不要重复添加！"
+        });
+      }
     } else {
       ElMessage({
-        type: "success",
+        type: "error",
         message: "创建失败！检查输入的值是否正确"
       });
     }
   });
 };
+
+let options = <any>[];
+
+for (let i = 0; i < 12; i++) {
+  options.push({
+    value: i + 1,
+    label: `${i + 1} 月`
+  });
+}
 </script>
 
 <template>
-  <el-button @click="openCreateDialog">创建账单</el-button>
+  <el-button @click="dialogVisible = !dialogVisible">创建账单</el-button>
   <el-dialog v-model="dialogVisible" title="创建账单" width="100%">
     <div class="mb-6">当前创建的账单对应的月份：{{ formData.month }}</div>
     <el-form ref="form" :model="formData" :rules="rules" label-position="left">
+      <el-form-item label="账单的月份" prop="month">
+        <el-select v-model="formData.month" placeholder="Select">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </el-form-item>
       <el-form-item label="本月总预算" prop="total">
         <el-input type="number" clearable :prefix-icon="Coin" v-model="formData.total" />
       </el-form-item>

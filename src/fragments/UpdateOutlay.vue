@@ -68,7 +68,7 @@ const onSubmit = async (formEl: FormInstance | undefined) => {
 
 <template>
   <div>
-    <el-button @click="dialogVisible = !dialogVisible" size="small" type="primary" text>编辑</el-button>
+    <el-button @click="dialogVisible = !dialogVisible" size="small" type="primary" text>编辑开支</el-button>
     <el-dialog v-model="dialogVisible" title="修改开支项" width="100%">
       <el-form ref="form" :model="formData" :rules="rules" label-position="left">
         <el-form-item label="标签" prop="label">
