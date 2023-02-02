@@ -9,6 +9,9 @@ declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddOutlay: typeof import('./src/fragments/AddOutlay.vue')['default']
     CreateBill: typeof import('./src/fragments/CreateBill.vue')['default']
+    DeleteBill: typeof import('./src/fragments/DeleteBill.vue')['default']
+    DeleteOutlay: typeof import('./src/fragments/DeleteOutlay.vue')['default']
+    LeftMenu: typeof import('./src/fragments/LeftMenu.vue')['default']
     UpdateBill: typeof import('./src/fragments/UpdateBill.vue')['default']
     UpdateOutlay: typeof import('./src/fragments/UpdateOutlay.vue')['default']
   }

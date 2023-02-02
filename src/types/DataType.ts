@@ -5,6 +5,7 @@ export interface Outlay {
 }
 
 export interface Bill {
+  year?: number;
   month?: number;
   surplus?: number;
   total?: number;
