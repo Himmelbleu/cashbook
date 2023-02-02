@@ -1,5 +1,15 @@
 import { defineComponent, resolveComponent, h } from "vue";
 
+function isText(props: any) {
+  if (props.text) {
+    return (
+      <div class="text mt-1" style={{ fontSize: props.textSize + "rem" }}>
+        {props.text}
+      </div>
+    );
+  }
+}
+
 export default defineComponent({
   props: {
     icon: {
@@ -8,7 +18,15 @@ export default defineComponent({
     },
     text: {
       type: String,
-      required: true
+      default: ""
+    },
+    iconSize: {
+      type: Number,
+      default: 1
+    },
+    textSize: {
+      type: Number,
+      default: 1
     }
   },
   setup(props, ctx) {
@@ -16,9 +34,9 @@ export default defineComponent({
     return () => (
       <div class="i-icon text-center">
         <div class="f-c-c">
-          <el-icon>{h(elIcon)}</el-icon>
+          <el-icon style={{ fontSize: props.iconSize + "rem" }}>{h(elIcon)}</el-icon>
         </div>
-        <div class="text">{props.text}</div>
+        {isText(props)}
       </div>
     );
   }

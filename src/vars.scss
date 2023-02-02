@@ -1,6 +1,6 @@
 :root {
-  --pri-text-color: #000;
-  --sec-text-color: #111;
+  --pri-text-color: var(--el-text-color-regular);
+  --sec-text-color: rgb(94, 94, 94);
   --thr-text-color: #222;
 }
 

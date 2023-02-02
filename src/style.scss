@@ -1,15 +1,23 @@
 body,
 html {
   margin: 0;
-  padding: 0;
+  color: var(--pri-text-color);
   background-color: var(--bg-color);
 }
 
+html {
+  font-size: var(--font-size);
+}
+
+body {
+  padding: 1rem;
+}
+
 * {
-  font-size: inherit !important;
+  box-sizing: border-box;
 }
 
 #app {
-  height: 100vh;
-  width: 100vw;
+  height: calc(100vh - 2rem);
+  width: calc(100vw - 2rem);
 }
