@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { useStorage } from "@vueuse/core";
-import { Coin } from "@element-plus/icons-vue";
+import { useStorage, useNow, useDateFormat } from "@vueuse/core";
 import type { FormInstance, FormRules } from "element-plus";
-import { Bill } from "../types/data-type";
+import { Coin } from "@element-plus/icons-vue";
 import { validateMoney, onSubmit } from "../helpers/form-helper";
+import { Bill } from "../types/data-type";
 
 const bills = useStorage<Bill[]>("bills", []);
 const dialog = ref(false);
 const formData = reactive(<Bill>{
+  show: true,
+  year: useDateFormat(useNow(), "YYYY").value,
   month: 1,
   total: 1000
 });

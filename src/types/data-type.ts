@@ -5,8 +5,9 @@ export interface Outlay {
 }
 
 export interface Bill {
-  year?: number;
-  month?: number;
+  year?: number | string;
+  month?: number | string;
+  show?: boolean;
   surplus?: number;
   total?: number;
   outlays?: Outlay[];
