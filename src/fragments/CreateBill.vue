@@ -2,16 +2,16 @@
 import { useStorage } from "@vueuse/core";
 import { Coin } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { Bill } from "../types/DataType";
+import { Bill } from "../types/data-type";
 import { validateMoney, onSubmit } from "../helpers/form-helper";
 
 const bills = useStorage<Bill[]>("bills", []);
-const dialogVisible = ref(false);
+const dialog = ref(false);
 const formData = reactive(<Bill>{
   month: 1,
   total: 1000
 });
-const formRules = reactive<FormRules>({
+const formRule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
 });
 const formInst = ref<FormInstance>();
@@ -29,7 +29,7 @@ function onSubmitPass() {
 
   if (isExistBill) {
     bills.value.push(formData);
-    dialogVisible.value = !dialogVisible.value;
+    dialog.value = !dialog.value;
     ElMessage({
       type: "success",
       message: "创建账单成功！"
@@ -59,10 +59,10 @@ for (let i = 0; i < 12; i++) {
 </script>
 
 <template>
-  <el-button @click="dialogVisible = !dialogVisible">创建账单</el-button>
-  <el-dialog v-model="dialogVisible" title="创建账单" width="90%">
+  <el-button @click="dialog = !dialog">创建账单</el-button>
+  <el-dialog v-model="dialog" title="创建账单" width="90%">
     <div class="mb-6">当前创建的账单对应的月份：{{ formData.month }}</div>
-    <el-form ref="formInst" :model="formData" :rules="formRules" label-position="left">
+    <el-form ref="formInst" :model="formData" :rules="formRule" label-position="left">
       <el-form-item label="账单的月份" prop="month">
         <el-select v-model="formData.month" placeholder="Select">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
@@ -73,7 +73,7 @@ for (let i = 0; i < 12; i++) {
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">创建</el-button>
-        <el-button @click="dialogVisible = !dialogVisible">取消</el-button>
+        <el-button @click="dialog = !dialog">取消</el-button>
       </el-form-item>
     </el-form>
   </el-dialog>

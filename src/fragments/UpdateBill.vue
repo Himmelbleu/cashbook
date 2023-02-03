@@ -3,7 +3,7 @@ import { PropType } from "vue";
 import { useStorage } from "@vueuse/core";
 import { Coin } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { Bill } from "../types/DataType";
+import { Bill } from "../types/data-type";
 import { validateMoney, onSubmit } from "../helpers/form-helper";
 
 const props = defineProps({
@@ -18,18 +18,18 @@ const props = defineProps({
 });
 
 const bills = useStorage<Bill[]>("bills", []);
-const dialogVisible = ref(false);
+const dialog = ref(false);
 const formData = reactive(<Bill>{
   total: bills.value[props.index].total
 });
-const formRules = reactive<FormRules>({
+const formRule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
 });
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
   bills.value[props.index].total = Number(formData.total);
-  dialogVisible.value = !dialogVisible.value;
+  dialog.value = !dialog.value;
   ElMessage({
     type: "success",
     message: "更新成功！"
@@ -46,16 +46,16 @@ function onSubmitError() {
 
 <template>
   <div>
-    <el-button text type="primary" size="small" @click="dialogVisible = !dialogVisible">修改账单</el-button>
-    <el-dialog v-model="dialogVisible" title="创建账单" width="90%">
+    <el-button text type="primary" size="small" @click="dialog = !dialog">修改账单</el-button>
+    <el-dialog v-model="dialog" title="创建账单" width="90%">
       <div class="mb-6">当前修改的账单对应的月份：{{ bill.month }}</div>
-      <el-form ref="formInst" :model="formData" :rules="formRules" label-position="left">
+      <el-form ref="formInst" :model="formData" :rules="formRule" label-position="left">
         <el-form-item label="本月总预算" prop="total">
           <el-input type="number" clearable :prefix-icon="Coin" v-model="formData.total" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">更新</el-button>
-          <el-button @click="dialogVisible = !dialogVisible">取消</el-button>
+          <el-button @click="dialog = !dialog">取消</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
