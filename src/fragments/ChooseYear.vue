@@ -10,7 +10,7 @@ const props = defineProps({
   }
 });
 
-const picker = ref([]);
+const picker = ref([new Date(new Date().setMonth(0)), new Date(new Date().setMonth(11))]);
 
 props.bills.forEach(bill => bill.show && (bill.show = false));
 search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Number(useDateFormat(useNow(), "YYYY").value));
