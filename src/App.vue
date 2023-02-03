@@ -4,8 +4,8 @@ import { Bill } from "./types/DataType";
 
 const bills = useStorage<Bill[]>("bills", []);
 
-function surplus(current: Bill, last: Bill) {
-  let result = Number(current.total!);
+const surplus = computed(() => (current: Bill, last: Bill) => {
+  let result = Number(current.total);
   current.outlays?.forEach(element => {
     result -= element.cost!;
   });
@@ -14,15 +14,25 @@ function surplus(current: Bill, last: Bill) {
   }
   current.surplus = Number(result);
   return result;
-}
+});
 
-function realTotal(current: Bill, last: Bill) {
-  let result = Number(current.total!);
+const realTotal = computed(() => (current: Bill, last: Bill) => {
+  let result = Number(current.total);
   if (last.surplus) {
-    result += Number(last.surplus!);
+    result += Number(last.surplus);
   }
   return result;
-}
+});
+
+const totalCost = computed(() => {
+  let result = 0;
+  bills.value.forEach(elem => {
+    elem.outlays?.forEach(el => {
+      result += Number(el.cost);
+    });
+  });
+  return result;
+});
 </script>
 
 <template>
@@ -34,6 +44,7 @@ function realTotal(current: Bill, last: Bill) {
     <el-button>选择年份</el-button>
     <CreateBill />
   </div>
+  <div class="mt-6 fsz-1.2">今年总花费：{{ totalCost }}</div>
   <div class="content">
     <div class="item card fsz-1.2 mt-6 px-3 pb-6 pt-2" v-for="(bill, billIndex) in bills" :key="billIndex">
       <div class="bill-head">
@@ -57,20 +68,20 @@ function realTotal(current: Bill, last: Bill) {
           </el-dropdown>
         </div>
         <div class="f-c-b">
-          <div class="total">总额：{{ bill.total }}</div>
+          <div class="total">预算：{{ bill.total }}</div>
           <div class="real-total" v-if="bills[billIndex - 1]">
-            实际总额：{{ realTotal(bill, bills[billIndex - 1]) }}
+            实际预算：{{ realTotal(bill, bills[billIndex - 1]) }}
           </div>
         </div>
       </div>
       <div class="bill-body mt-6">
-        <div class="outlay mb-4 f-c-b" v-for="(outlay, outlayIndex) in bill.outlays" :key="outlayIndex">
+        <div class="outlay mb-6 f-c-b" v-for="(outlay, outlayIndex) in bill.outlays" :key="outlayIndex">
           <div class="w-15%">
             <el-tag v-if="outlay.label">{{ outlay.label }}</el-tag>
           </div>
-          <div class="fsz-0.9 w-45% px-4">{{ outlay.text }}</div>
-          <div class="fsz-0.9 w-25% px-4">{{ outlay.cost }}</div>
-          <div class="fsz-0.9 w-15%">
+          <div class="w-45% px-4">{{ outlay.text }}</div>
+          <div class="w-25% px-4">{{ outlay.cost }}</div>
+          <div class="w-15%">
             <el-dropdown trigger="click">
               <span class="el-dropdown-link">
                 操作<el-icon class="el-icon--right"><arrow-down /></el-icon>
