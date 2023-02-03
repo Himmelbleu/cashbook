@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useDateFormat } from "@vueuse/core";
+import { useNow, useDateFormat } from "@vueuse/core";
 import { Bill } from "../types/data-type";
 
 const props = defineProps({
@@ -10,32 +10,39 @@ const props = defineProps({
   }
 });
 
-const datePickerData = ref();
+const picker = ref([]);
+
+props.bills.forEach(bill => bill.show && (bill.show = false));
+search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12], Number(useDateFormat(useNow(), "YYYY").value));
+
+function search(storage: number[], year: number) {
+  for (let index = 0; index < props.bills.length; index++) {
+    const mont = storage.find(el => el == props.bills[index].month);
+    const bill = props.bills.find(el => el.month == mont && el.year == year);
+    bill && (bill.show = true);
+  }
+}
 
 function change(val: any) {
-  const startDate = useDateFormat(val[0], "YYYY-MM").value.split("-");
-  const startYear = Number(startDate[0]);
-  const startMonth = Number(startDate[1]);
-  const endDate = useDateFormat(val[1], "YYYY-MM").value.split("-");
-  const endYear = Number(endDate[0]);
-  const endMonth = Number(endDate[1]);
-  let seldMons: any[] = [];
+  const sDate = useDateFormat(val[0], "YYYY-MM").value.split("-");
+  const sYear = Number(sDate[0]);
+  const sMonth = Number(sDate[1]);
+  const eDate = useDateFormat(val[1], "YYYY-MM").value.split("-");
+  const eYear = Number(eDate[0]);
+  const eMonth = Number(eDate[1]);
+  const sStore: number[] = [];
+  const eStore: number[] = [];
 
-  if (startYear === endYear) {
-    for (let i = startMonth; i <= endMonth; i++) seldMons.push(i);
-    props.bills.forEach(bill => bill.show && (bill.show = false));
-    for (let index = 0; index < props.bills.length; index++) {
-      const mon = seldMons.find(ele => ele == props.bills[index].month);
-      const bill = props.bills.find(ele => ele.month == mon);
-      bill && (bill.show = true);
-    }
+  props.bills.forEach(bill => bill.show && (bill.show = false));
+
+  if (sYear === eYear) {
+    for (let i = sMonth; i <= eMonth; i++) sStore.push(i);
+    search(sStore, sYear);
   } else {
-    for (let i = endMonth; i <= 12; i++) {
-      seldMons.push(i);
-    }
-    for (let i = 1; i <= endMonth; i++) {
-      seldMons.push(i);
-    }
+    for (let i = sMonth; i <= 12; i++) sStore.push(i);
+    for (let i = 1; i <= eMonth; i++) eStore.push(i);
+    search(sStore, sYear);
+    search(eStore, eYear);
   }
 }
 </script>
@@ -43,7 +50,7 @@ function change(val: any) {
 <template>
   <div>
     <el-date-picker
-      v-model="datePickerData"
+      v-model="picker"
       @change="change"
       type="monthrange"
       range-separator="To"

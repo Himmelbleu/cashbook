@@ -10,6 +10,7 @@ const dialog = ref(false);
 const formData = reactive(<Bill>{
   show: true,
   year: useDateFormat(useNow(), "YYYY").value,
+  // year: "2024",
   month: 1,
   total: 1000
 });
