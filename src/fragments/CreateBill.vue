@@ -46,7 +46,8 @@ function onSubmitPass() {
       });
     } else {
       props.bill[props.year][form.month] = {
-        total: form.total
+        total: form.total,
+        surplus: 0
       };
       dialog.value = !dialog.value;
       ElMessage({
@@ -57,7 +58,8 @@ function onSubmitPass() {
   } else {
     props.bill[props.year] = {
       [form.month]: {
-        total: form.total
+        total: form.total,
+        surplus: 0
       }
     };
     dialog.value = !dialog.value;

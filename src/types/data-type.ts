@@ -12,4 +12,4 @@ export interface IMonth {
 }
 
 type Month = Record<string, IMonth>;
-export type Bill = Record<string, Month>;
+export type Bill = Record<number | string, Month>;

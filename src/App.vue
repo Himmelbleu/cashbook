@@ -4,10 +4,38 @@ import { Bill } from "./types/data-type";
 
 const year = useDateFormat(useNow(), "YYYY").value;
 const bill = useStorage<Bill>("bill", {});
+const keys = Object.keys(bill.value[year]);
 
-const calcSurplus = computed(() => (now: Bill, last: Bill) => {});
+function calcSurplus(montKey: string) {
+  const nowMont = bill.value[year][montKey];
+  let totalSurplus = 0;
+  nowMont.outlays?.forEach(ele => {
+    totalSurplus += Number(ele.cost);
+  });
+  nowMont.surplus = Number(nowMont.total) - totalSurplus;
+  return nowMont.surplus;
+}
 
-const calcRealTotal = computed(() => (now: Bill, last: Bill) => {});
+function calcRealSurplus(montKey: string) {
+  const nowMont = bill.value[year][montKey];
+  let realTotalSurplus = 0;
+  let isFirstMonth = false;
+
+  keys.forEach((ele, index) => {
+    if (montKey == ele && index == 0) {
+      isFirstMonth = true;
+    }
+  });
+
+  if (!isFirstMonth) {
+    const nowIndex = keys.findIndex(ele => ele == montKey);
+    const preMont = bill.value[year][keys[nowIndex - 1]];
+    if (preMont?.surplus && nowMont?.surplus) {
+      realTotalSurplus = Number(preMont.surplus) + Number(nowMont.surplus);
+    }
+  }
+  return realTotalSurplus;
+}
 
 const calcYearTotal = computed(() => {});
 </script>
@@ -23,15 +51,8 @@ const calcYearTotal = computed(() => {});
       <CreateBill :bill="bill" :year="year" />
     </div>
   </div>
-  <div class="mt-6 f-c-b">
-    <div class="fsz-1.4">今年总花费：{{ calcYearTotal }}</div>
-    <div class="f-c-c fsz-1.6">
-      <!-- <el-icon class="mr-4" @click="ascend(bill, () => (sequence = true))"><CaretTop /></el-icon> -->
-      <!-- <el-icon @click="descend(bill, () => (sequence = false))"><CaretBottom /></el-icon> -->
-    </div>
-  </div>
   <div class="content">
-    <template v-for="(val, key, i) in bill['2023']" :key="i">
+    <template v-for="(val, key, i) in bill[year]" :key="i">
       <div class="item card fsz-1.2 mt-6 px-3 pb-6 pt-2">
         <div class="bill-head">
           <div class="mb-4 f-c-b">
@@ -56,12 +77,7 @@ const calcYearTotal = computed(() => {});
               </template>
             </el-dropdown>
           </div>
-          <div class="f-c-b">
-            <div class="total">预算：{{ val.total }}</div>
-            <!-- <div class="real-total" v-if="bill[billIndex - 1]">
-              实际预算：{{ calcRealTotal(bill, bill[billIndex - 1]) }}
-            </div> -->
-          </div>
+          <div class="total f-c-b">预算：{{ val.total }}</div>
         </div>
         <div class="bill-body mt-6">
           <div class="outlay-head mb-6">
@@ -100,7 +116,10 @@ const calcYearTotal = computed(() => {});
           </div>
         </div>
         <div class="bill-bott mt-6 f-c-e">
-          <!-- <div>剩余：{{ calcSurplus(bill, bill[billIndex - 1]) }}</div> -->
+          <div>
+            <div class="mb-2">本月剩余：{{ calcSurplus(key) }}</div>
+            <div v-html="calcRealSurplus(key) ? '实际剩余：' + calcRealSurplus(key) : ''" />
+          </div>
         </div>
       </div>
     </template>
