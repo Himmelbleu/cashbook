@@ -36,8 +36,6 @@ function calcRealSurplus(montKey: string) {
   }
   return realTotalSurplus;
 }
-
-const calcYearTotal = computed(() => {});
 </script>
 
 <template>
@@ -59,7 +57,7 @@ const calcYearTotal = computed(() => {});
             <div class="month fsz-1.4">{{ key }} 月</div>
             <el-dropdown trigger="click">
               <div class="f-c-c">
-                <div class="mr-1">操作</div>
+                <div class="mr-1 sec-color">操作</div>
                 <el-icon><arrow-down /></el-icon>
               </div>
               <template #dropdown>
@@ -77,17 +75,17 @@ const calcYearTotal = computed(() => {});
               </template>
             </el-dropdown>
           </div>
-          <div class="total f-c-b">预算：{{ val.total }}</div>
+          <div class="total f-c-b fsz-1.2">预算：{{ val.total }}</div>
         </div>
         <div class="bill-body mt-6">
           <div class="outlay-head mb-6">
             <div v-if="val.outlays && val.outlays.length" class="f-c-b">
-              <div class="w-15%">标签</div>
-              <div class="w-45%">备注</div>
-              <div class="w-25%">金额</div>
+              <div class="w-15% sec-color">标签</div>
+              <div class="w-45% sec-color">备注</div>
+              <div class="w-25% sec-color">金额</div>
               <div class="w-15%"></div>
             </div>
-            <div v-else class="fsz-1.2 f-c-c">没有开支</div>
+            <div v-else class="fsz-1.2 f-c-c sec-color">没有开支</div>
           </div>
           <div class="outlay mb-6 f-c-b" v-for="(item, j) in val.outlays" :key="j">
             <div class="w-15%">
@@ -98,7 +96,7 @@ const calcYearTotal = computed(() => {});
             <div class="w-15% f-c-c">
               <el-dropdown trigger="click">
                 <div class="f-c-c">
-                  <div class="mr-1">操作</div>
+                  <div class="mr-1 sec-color">操作</div>
                   <el-icon><arrow-down /></el-icon>
                 </div>
                 <template #dropdown>
@@ -117,7 +115,7 @@ const calcYearTotal = computed(() => {});
         </div>
         <div class="bill-bott mt-6 f-c-e">
           <div>
-            <div class="mb-2">本月剩余：{{ calcSurplus(key) }}</div>
+            <div class="mb-2 sec-color">本月剩余：{{ calcSurplus(key) }}</div>
             <div v-html="calcRealSurplus(key) ? '实际剩余：' + calcRealSurplus(key) : ''" />
           </div>
         </div>
