@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useStorage } from "@vueuse/core";
 import { Coin, Discount, ChatDotRound } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { Outlay, Bill } from "../types/data-type";
+import { IOutlay, Bill } from "../types/data-type";
 import { validateMoney, onSubmit } from "../helpers/form-helper";
 
 const props = defineProps({
@@ -11,30 +10,33 @@ const props = defineProps({
     type: Object as PropType<Bill>,
     required: true
   },
+  year: {
+    type: String,
+    required: true
+  },
+  month: {
+    type: String,
+    required: true
+  },
   outlay: {
-    type: Object as PropType<Outlay>,
+    type: Object as PropType<IOutlay>,
     required: true
   },
-  billIndex: {
-    type: Number,
-    required: true
-  },
-  outlayIndex: {
+  index: {
     type: Number,
     required: true
   }
 });
 
-const bills = useStorage<Bill[]>("bills", []);
 const dialog = ref(false);
-const formRule = reactive<FormRules>({
+const rule = reactive<FormRules>({
   cost: [{ validator: validateMoney, trigger: "change" }]
 });
-const formData = reactive(<Outlay>props.outlay);
+const form = reactive(<IOutlay>props.outlay);
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  bills.value[props.billIndex].outlays![props.outlayIndex] = formData;
+  props.bill[props.year][props.month].outlays![props.index] = form;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",
@@ -54,20 +56,15 @@ function onSubmitError() {
   <div>
     <el-button @click="dialog = !dialog" size="small" type="primary" text>编辑支出</el-button>
     <el-dialog v-model="dialog" title="修改支出项" width="90%">
-      <el-form ref="formInst" :model="formData" :rules="formRule" label-position="left">
+      <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
         <el-form-item label="标签" prop="label">
-          <el-input type="text" placeholder="请输入标签" clearable :prefix-icon="Discount" v-model="formData.label" />
+          <el-input type="text" placeholder="请输入标签" clearable :prefix-icon="Discount" v-model="form.label" />
         </el-form-item>
         <el-form-item label="备注" prop="text">
-          <el-input
-            type="text"
-            placeholder="请输入备注"
-            clearable
-            :prefix-icon="ChatDotRound"
-            v-model="formData.text" />
+          <el-input type="text" placeholder="请输入备注" clearable :prefix-icon="ChatDotRound" v-model="form.text" />
         </el-form-item>
         <el-form-item label="花费" prop="cost">
-          <el-input type="number" clearable :prefix-icon="Coin" v-model="formData.cost" />
+          <el-input type="number" clearable :prefix-icon="Coin" v-model="form.cost" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">更新</el-button>

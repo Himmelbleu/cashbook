@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useStorage } from "@vueuse/core";
 import { Coin } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Bill } from "../types/data-type";
@@ -11,24 +10,31 @@ const props = defineProps({
     type: Object as PropType<Bill>,
     required: true
   },
+  year: {
+    type: String,
+    required: true
+  },
+  month: {
+    type: String,
+    required: true
+  },
   index: {
     type: Number,
     required: true
   }
 });
 
-const bills = useStorage<Bill[]>("bills", []);
 const dialog = ref(false);
-const formData = reactive(<Bill>{
-  total: bills.value[props.index].total
+const form = reactive({
+  total: props.bill[props.year][props.month].total
 });
-const formRule = reactive<FormRules>({
+const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
 });
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  bills.value[props.index].total = Number(formData.total);
+  props.bill[props.year][props.month].total = form.total;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",
@@ -48,10 +54,10 @@ function onSubmitError() {
   <div>
     <el-button text type="primary" size="small" @click="dialog = !dialog">修改账单</el-button>
     <el-dialog v-model="dialog" title="创建账单" width="90%">
-      <div class="mb-6">当前修改的账单对应的月份：{{ bill.month }}</div>
-      <el-form ref="formInst" :model="formData" :rules="formRule" label-position="left">
+      <div class="mb-6">当前修改的账单对应的月份：{{ month }}</div>
+      <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
         <el-form-item label="本月总预算" prop="total">
-          <el-input type="number" clearable :prefix-icon="Coin" v-model="formData.total" />
+          <el-input type="number" clearable :prefix-icon="Coin" v-model="form.total" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">更新</el-button>

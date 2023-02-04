@@ -1,31 +1,28 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useStorage } from "@vueuse/core";
-import { Outlay, Bill } from "../types/data-type";
+import { Bill } from "../types/data-type";
 
 const props = defineProps({
   bill: {
     type: Object as PropType<Bill>,
     required: true
   },
-  outlay: {
-    type: Object as PropType<Outlay>,
+  year: {
+    type: String,
     required: true
   },
-  billIndex: {
-    type: Number,
+  month: {
+    type: String,
     required: true
   },
-  outlayIndex: {
+  index: {
     type: Number,
     required: true
   }
 });
 
-const bills = useStorage<Bill[]>("bills", []);
-
 function confirm() {
-  bills.value[props.billIndex].outlays?.splice(props.outlayIndex, 1);
+  props.bill[props.year][props.month].outlays?.splice(props.index, 1);
   ElMessage({
     type: "success",
     message: "删除成功！"

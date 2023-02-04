@@ -46,12 +46,12 @@ const calcYearTotal = computed(() => {});
                   <div class="f-c-c">
                     <AddOutlay :bill="bill" :year="year" :month="key" />
                   </div>
-                  <!-- <div class="f-c-c mt-2">
-                    <UpdateBill :bill="bill" :index="index" />
+                  <div class="f-c-c mt-2">
+                    <UpdateBill :bill="bill" :year="year" :month="key" :index="i" />
                   </div>
                   <div class="f-c-c mt-2">
-                    <DeleteBill :bill="bill" :index="index" />
-                  </div> -->
+                    <DeleteBill :bill="bill" :year="year" :month="key" />
+                  </div>
                 </div>
               </template>
             </el-dropdown>
@@ -65,7 +65,7 @@ const calcYearTotal = computed(() => {});
         </div>
         <div class="bill-body mt-6">
           <div class="outlay-head mb-6">
-            <div v-if="val.outlays" class="f-c-b">
+            <div v-if="val.outlays && val.outlays.length" class="f-c-b">
               <div class="w-15%">标签</div>
               <div class="w-45%">备注</div>
               <div class="w-25%">金额</div>
@@ -86,14 +86,14 @@ const calcYearTotal = computed(() => {});
                   <el-icon><arrow-down /></el-icon>
                 </div>
                 <template #dropdown>
-                  <!-- <div class="my-2">
+                  <div class="my-2">
                     <div class="f-c-c">
-                      <UpdateOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
+                      <UpdateOutlay :bill="bill" :outlay="item" :index="j" :year="year" :month="key" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <DeleteOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
+                      <DeleteOutlay :bill="bill" :index="j" :year="year" :month="key" />
                     </div>
-                  </div> -->
+                  </div>
                 </template>
               </el-dropdown>
             </div>

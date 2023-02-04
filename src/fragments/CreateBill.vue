@@ -27,23 +27,38 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  const montKeys = Object.keys(props.bill[props.year]);
-  let hasMontKey = false;
+  if (props.bill[props.year]) {
+    let hasMontKey = false;
+    const montKeys = Object.keys(props.bill[props.year]);
 
-  montKeys.forEach(ele => {
-    if (form.month.toString() === ele) {
-      hasMontKey = true;
+    if (montKeys) {
+      montKeys.forEach(ele => {
+        if (form.month.toString() === ele) {
+          hasMontKey = true;
+        }
+      });
     }
-  });
 
-  if (hasMontKey) {
-    ElMessage({
-      type: "error",
-      message: "已有该月的账单，不要重复添加！"
-    });
+    if (hasMontKey) {
+      ElMessage({
+        type: "error",
+        message: "已有该月的账单，不要重复添加！"
+      });
+    } else {
+      props.bill[props.year][form.month] = {
+        total: form.total
+      };
+      dialog.value = !dialog.value;
+      ElMessage({
+        type: "success",
+        message: "创建账单成功！"
+      });
+    }
   } else {
-    props.bill[props.year][form.month] = {
-      total: form.total
+    props.bill[props.year] = {
+      [form.month]: {
+        total: form.total
+      }
     };
     dialog.value = !dialog.value;
     ElMessage({

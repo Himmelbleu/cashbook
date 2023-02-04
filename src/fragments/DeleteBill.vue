@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { useStorage } from "@vueuse/core";
 import { Bill } from "../types/data-type";
 
 const props = defineProps({
@@ -8,16 +7,18 @@ const props = defineProps({
     type: Object as PropType<Bill>,
     required: true
   },
-  index: {
-    type: Number,
+  year: {
+    type: String,
+    required: true
+  },
+  month: {
+    type: String,
     required: true
   }
 });
 
-const bills = useStorage<Bill[]>("bills", []);
-
 function confirm() {
-  bills.value.splice(props.index, 1);
+  Reflect.deleteProperty(props.bill[props.year], props.month);
   ElMessage({
     type: "success",
     message: "删除成功！"
