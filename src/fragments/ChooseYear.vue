@@ -1,29 +1,56 @@
 <script setup lang="ts">
-import { PropType } from "vue";
-import { useNow, useDateFormat } from "@vueuse/core";
-import { Bill } from "../types/data-type";
-
 const props = defineProps({
-  bills: {
-    type: Object as PropType<Bill[]>,
+  year: {
+    type: String,
     required: true
   }
 });
 
-const picker = ref([new Date(new Date().setMonth(0)), new Date(new Date().setMonth(11))]);
+const options = ref<any>([
+  {
+    label: "Before",
+    options: []
+  },
+  {
+    label: "After",
+    options: []
+  }
+]);
+const numYear = ref(Number(props.year));
+let year = Number(props.year);
 
-function change(val: any) {}
+for (let i = 10; i >= 0; i--) {
+  options.value[1].options.push({
+    value: year,
+    label: `${year} 年`
+  });
+  year++;
+}
+
+year = Number(props.year);
+
+for (let i = 0; i < 10; i++) {
+  options.value[0].options.push({
+    value: year,
+    label: `${year} 年`
+  });
+  year--;
+}
+
+const emits = defineEmits(["change"]);
+
+function change(val: any) {
+  emits("change", numYear.value);
+}
 </script>
 
 <template>
   <div>
-    <el-date-picker
-      v-model="picker"
-      @change="change"
-      type="monthrange"
-      range-separator="To"
-      start-placeholder="start month"
-      end-placeholder="end month" />
+    <el-select @change="change" v-model="numYear" placeholder="Select">
+      <el-option-group v-for="group in options" :key="group.label" :label="group.label">
+        <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.value" />
+      </el-option-group>
+    </el-select>
   </div>
 </template>
 

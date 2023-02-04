@@ -19,7 +19,7 @@ const props = defineProps({
 const dialog = ref(false);
 const form = reactive({
   month: 1,
-  total: 1000
+  total: 1800
 });
 const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]

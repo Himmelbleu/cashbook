@@ -8,6 +8,8 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AddOutlay: typeof import('./src/fragments/AddOutlay.vue')['default']
+    BillMain: typeof import('./src/fragments/BillMain.vue')['default']
+    CabinetContent: typeof import('./src/fragments/CabinetContent.vue')['default']
     ChooseYear: typeof import('./src/fragments/ChooseYear.vue')['default']
     CreateBill: typeof import('./src/fragments/CreateBill.vue')['default']
     DeleteBill: typeof import('./src/fragments/DeleteBill.vue')['default']

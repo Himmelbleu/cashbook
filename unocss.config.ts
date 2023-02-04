@@ -1,14 +1,6 @@
 import { Rule, UserShortcuts } from "unocss";
 
 const rules = <Rule<any>[]>[
-  // left
-  [/^l-(px|rem|em|vh|vw|%)-(\d+)$/, ([, uint, val]) => ({ left: `${val}${uint} !important` })],
-  // top
-  [/^t-(px|rem|em|vh|vw|%)-(\d+)$/, ([, uint, val]) => ({ top: `${val}${uint} !important` })],
-  // bottom
-  [/^b-(px|rem|em|vh|vw|%)-(\d+)$/, ([, uint, val]) => ({ botom: `${val}${uint} !important` })],
-  // right
-  [/^r-(px|rem|em|vh|vw|%)-(\d+)$/, ([, uint, val]) => ({ right: `${val}${uint} !important` })],
   // 字体
   [/^fsz-(\d+\.{0,1}\d{0,2})$/, ([, d]) => ({ "font-size": `${d}rem !important` })],
   // 间距
@@ -16,10 +8,7 @@ const rules = <Rule<any>[]>[
   // 行高
   [/^leh-(\d+\.{0,1}\d{0,2})$/, ([, d]) => ({ "line-height": `${d} !important` })],
   // overflow
-  [
-    /^ofw-(auto|hidden|inherit|initial|overlay|revert|scroll|unset|visible)$/,
-    ([, d]) => ({ overflow: `${d}` })
-  ],
+  [/^ofw-(auto|hidden|inherit|initial|overlay|revert|scroll|unset|visible)$/, ([, d]) => ({ overflow: `${d}` })],
   // 文本颜色
   [/^(pri|sec|thr)-color$/, ([, d]) => ({ color: `var(--${d}-text-color) !important` })],
   // 背景颜色
