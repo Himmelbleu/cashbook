@@ -1,14 +1,15 @@
-export interface Outlay {
+export interface IOutlay {
   cost?: number;
-  label?: string;
   text?: string;
+  label?: string;
 }
 
-export interface Bill {
-  year?: number | string;
-  month?: number | string;
+export interface IMonth {
   show?: boolean;
-  surplus?: number;
   total?: number;
-  outlays?: Outlay[];
+  surplus?: number;
+  outlays?: IOutlay[];
 }
+
+type Month = Record<string, IMonth>;
+export type Bill = Record<string, Month>;

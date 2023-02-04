@@ -1,55 +1,15 @@
 <script setup lang="ts">
-import { useStorage } from "@vueuse/core";
+import { useStorage, useNow, useDateFormat } from "@vueuse/core";
 import { Bill } from "./types/data-type";
 
-const bills = useStorage<Bill[]>("bills", []);
-const sequence = ref(true);
+const year = useDateFormat(useNow(), "YYYY").value;
+const bill = useStorage<Bill>("bill", {});
 
-function ascend() {
-  bills.value.sort((a, b) => {
-    return Number(a.month) - Number(b.month);
-  });
-  sequence.value = true;
-}
+const calcSurplus = computed(() => (now: Bill, last: Bill) => {});
 
-function descend() {
-  bills.value.sort((a, b) => {
-    return Number(b.month) - Number(a.month);
-  });
-  sequence.value = false;
-}
+const calcRealTotal = computed(() => (now: Bill, last: Bill) => {});
 
-descend();
-
-watch(bills, () => {
-  sequence.value ? ascend() : descend();
-});
-
-const calcSurplus = computed(() => (current: Bill, last: Bill) => {
-  let result = Number(current.total);
-  current.outlays?.forEach(element => {
-    result -= Number(element.cost);
-  });
-  if (last) result += Number(last.surplus);
-  current.surplus = Number(result);
-  return result;
-});
-
-const calcRealTotal = computed(() => (current: Bill, last: Bill) => {
-  let result = Number(current.total);
-  if (last.surplus) result += Number(last.surplus);
-  return result;
-});
-
-const calcYearTotal = computed(() => {
-  let result = 0;
-  bills.value.forEach(elem => {
-    elem.outlays?.forEach(el => {
-      result += Number(el.cost);
-    });
-  });
-  return result;
-});
+const calcYearTotal = computed(() => {});
 </script>
 
 <template>
@@ -58,22 +18,24 @@ const calcYearTotal = computed(() => {
     <div class="fsz-1.4">Himmelbleu 的账单</div>
   </div>
   <div class="menus mt-6">
-    <ChooseYear :bills="bills" />
-    <CreateBill />
+    <!-- <ChooseYear :bills="bill" /> -->
+    <div class="mt-6">
+      <CreateBill :bill="bill" :year="year" />
+    </div>
   </div>
   <div class="mt-6 f-c-b">
     <div class="fsz-1.4">今年总花费：{{ calcYearTotal }}</div>
     <div class="f-c-c fsz-1.6">
-      <el-icon class="mr-4" @click="ascend"><CaretTop /></el-icon>
-      <el-icon @click="descend"><CaretBottom /></el-icon>
+      <!-- <el-icon class="mr-4" @click="ascend(bill, () => (sequence = true))"><CaretTop /></el-icon> -->
+      <!-- <el-icon @click="descend(bill, () => (sequence = false))"><CaretBottom /></el-icon> -->
     </div>
   </div>
   <div class="content">
-    <template v-for="(bill, billIndex) in bills">
-      <div class="item card fsz-1.2 mt-6 px-3 pb-6 pt-2" v-if="bill.show" :key="billIndex">
+    <template v-for="(val, key, i) in bill['2023']" :key="i">
+      <div class="item card fsz-1.2 mt-6 px-3 pb-6 pt-2">
         <div class="bill-head">
           <div class="mb-4 f-c-b">
-            <div class="month fsz-1.4">{{ bill.month }} 月</div>
+            <div class="month fsz-1.4">{{ key }} 月</div>
             <el-dropdown trigger="click">
               <div class="f-c-c">
                 <div class="mr-1">操作</div>
@@ -82,41 +44,41 @@ const calcYearTotal = computed(() => {
               <template #dropdown>
                 <div class="my-2">
                   <div class="f-c-c">
-                    <AddOutlay :bill="bill" :index="billIndex" />
+                    <AddOutlay :bill="bill" :year="year" :month="key" />
+                  </div>
+                  <!-- <div class="f-c-c mt-2">
+                    <UpdateBill :bill="bill" :index="index" />
                   </div>
                   <div class="f-c-c mt-2">
-                    <UpdateBill :bill="bill" :index="billIndex" />
-                  </div>
-                  <div class="f-c-c mt-2">
-                    <DeleteBill :bill="bill" :index="billIndex" />
-                  </div>
+                    <DeleteBill :bill="bill" :index="index" />
+                  </div> -->
                 </div>
               </template>
             </el-dropdown>
           </div>
           <div class="f-c-b">
-            <div class="total">预算：{{ bill.total }}</div>
-            <div class="real-total" v-if="bills[billIndex - 1]">
-              实际预算：{{ calcRealTotal(bill, bills[billIndex - 1]) }}
-            </div>
+            <div class="total">预算：{{ val.total }}</div>
+            <!-- <div class="real-total" v-if="bill[billIndex - 1]">
+              实际预算：{{ calcRealTotal(bill, bill[billIndex - 1]) }}
+            </div> -->
           </div>
         </div>
         <div class="bill-body mt-6">
           <div class="outlay-head mb-6">
-            <div v-if="bill.outlays" class="f-c-b">
+            <div v-if="val.outlays" class="f-c-b">
               <div class="w-15%">标签</div>
               <div class="w-45%">备注</div>
               <div class="w-25%">金额</div>
               <div class="w-15%"></div>
             </div>
-            <div v-else class="fsz-2 f-c-c">没有开支</div>
+            <div v-else class="fsz-1.2 f-c-c">没有开支</div>
           </div>
-          <div class="outlay mb-6 f-c-b" v-for="(outlay, outlayIndex) in bill.outlays" :key="outlayIndex">
+          <div class="outlay mb-6 f-c-b" v-for="(item, j) in val.outlays" :key="j">
             <div class="w-15%">
-              <el-tag v-if="outlay.label">{{ outlay.label }}</el-tag>
+              <el-tag v-if="item.label">{{ item.label }}</el-tag>
             </div>
-            <div class="w-45%">{{ outlay.text }}</div>
-            <div class="w-25%">{{ outlay.cost }}</div>
+            <div class="w-45%">{{ item.text }}</div>
+            <div class="w-25%">{{ item.cost }}</div>
             <div class="w-15% f-c-c">
               <el-dropdown trigger="click">
                 <div class="f-c-c">
@@ -124,21 +86,21 @@ const calcYearTotal = computed(() => {
                   <el-icon><arrow-down /></el-icon>
                 </div>
                 <template #dropdown>
-                  <div class="my-2">
+                  <!-- <div class="my-2">
                     <div class="f-c-c">
                       <UpdateOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
                     </div>
                     <div class="f-c-c mt-2">
                       <DeleteOutlay :bill="bill" :outlay="outlay" :bill-index="billIndex" :outlay-index="outlayIndex" />
                     </div>
-                  </div>
+                  </div> -->
                 </template>
               </el-dropdown>
             </div>
           </div>
         </div>
         <div class="bill-bott mt-6 f-c-e">
-          <div>剩余：{{ calcSurplus(bill, bills[billIndex - 1]) }}</div>
+          <!-- <div>剩余：{{ calcSurplus(bill, bill[billIndex - 1]) }}</div> -->
         </div>
       </div>
     </template>

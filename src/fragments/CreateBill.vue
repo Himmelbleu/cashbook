@@ -1,45 +1,54 @@
 <script setup lang="ts">
-import { useStorage, useNow, useDateFormat } from "@vueuse/core";
+import { PropType } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Coin } from "@element-plus/icons-vue";
 import { validateMoney, onSubmit } from "../helpers/form-helper";
 import { Bill } from "../types/data-type";
 
-const bills = useStorage<Bill[]>("bills", []);
+const props = defineProps({
+  year: {
+    type: String,
+    required: true
+  },
+  bill: {
+    type: Object as PropType<Bill>,
+    required: true
+  }
+});
+
 const dialog = ref(false);
-const formData = reactive(<Bill>{
-  show: true,
-  year: useDateFormat(useNow(), "YYYY").value,
+const form = reactive({
   month: 1,
   total: 1000
 });
-const formRule = reactive<FormRules>({
+const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
 });
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  let isExistBill = true;
+  const montKeys = Object.keys(props.bill[props.year]);
+  let hasMontKey = false;
 
-  if (bills.value.length) {
-    bills.value.forEach(elem => {
-      if (elem.month === formData.month) {
-        isExistBill = false;
-      }
+  montKeys.forEach(ele => {
+    if (form.month.toString() === ele) {
+      hasMontKey = true;
+    }
+  });
+
+  if (hasMontKey) {
+    ElMessage({
+      type: "error",
+      message: "已有该月的账单，不要重复添加！"
     });
-  }
-
-  if (isExistBill) {
-    bills.value.push(formData);
+  } else {
+    props.bill[props.year][form.month] = {
+      total: form.total
+    };
     dialog.value = !dialog.value;
     ElMessage({
       type: "success",
       message: "创建账单成功！"
-    });
-  } else {
-    ElMessage({
-      type: "error",
-      message: "已有该月的账单，不要重复添加！"
     });
   }
 }
@@ -51,7 +60,7 @@ function onSubmitError() {
   });
 }
 
-let options = <any>[];
+const options = <{ value: number; label: string }[]>[];
 for (let i = 0; i < 12; i++) {
   options.push({
     value: i + 1,
@@ -63,15 +72,15 @@ for (let i = 0; i < 12; i++) {
 <template>
   <el-button @click="dialog = !dialog">创建账单</el-button>
   <el-dialog v-model="dialog" title="创建账单" width="90%">
-    <div class="mb-6">当前创建的账单对应的月份：{{ formData.month }}</div>
-    <el-form ref="formInst" :model="formData" :rules="formRule" label-position="left">
+    <div class="mb-6">当前创建的账单对应的月份：{{ form.month }}</div>
+    <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
       <el-form-item label="账单的月份" prop="month">
-        <el-select v-model="formData.month" placeholder="Select">
+        <el-select v-model="form.month" placeholder="Select">
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
       <el-form-item label="本月总预算" prop="total">
-        <el-input type="number" clearable :prefix-icon="Coin" v-model="formData.total" />
+        <el-input type="number" clearable :prefix-icon="Coin" v-model="form.total" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">创建</el-button>
