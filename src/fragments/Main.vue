@@ -6,16 +6,15 @@ const cashbook = useStorage<Bill>("cashbook", {});
 const year = ref(useDateFormat(useNow(), "YYYY").value);
 const montKs = Object.keys(cashbook.value[year.value] || []);
 
-function calcSurplus(k: string) {
+const calcSurplus = computed(() => (k: string) => {
   const nowMont = cashbook.value[year.value][k];
+  let isFirstMonth = false;
   let expenses = 0;
   let surplus = 0;
 
   nowMont.outlays?.forEach(ele => {
     expenses += Number(ele.cost);
   });
-
-  let isFirstMonth = false;
 
   montKs.forEach((ele, index) => {
     if (k == ele && index == 0) {
@@ -36,7 +35,7 @@ function calcSurplus(k: string) {
   nowMont.surplus = surplus;
 
   return surplus;
-}
+});
 
 function change(val: number) {
   year.value = val + "";
