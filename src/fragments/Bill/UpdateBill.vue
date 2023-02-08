@@ -26,7 +26,7 @@ const props = defineProps({
 
 const dialog = ref(false);
 const form = reactive({
-  total: props.cashbook[props.year][props.month].total
+  total: props.cashbook[props.year][props.month].budget
 });
 const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
@@ -34,7 +34,7 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  props.cashbook[props.year][props.month].total = form.total;
+  props.cashbook[props.year][props.month].budget = form.total;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",

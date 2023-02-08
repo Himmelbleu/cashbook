@@ -19,10 +19,10 @@ const props = defineProps({
 const dialog = ref(false);
 const form = reactive({
   month: 1,
-  total: 1800
+  budget: 1800
 });
 const rule = reactive<FormRules>({
-  total: [{ validator: validateMoney, trigger: "change" }]
+  budget: [{ validator: validateMoney, trigger: "change" }]
 });
 const formInst = ref<FormInstance>();
 
@@ -46,7 +46,7 @@ function onSubmitPass() {
       });
     } else {
       props.cashbook[props.year][form.month] = {
-        total: form.total,
+        budget: form.budget,
         surplus: 0
       };
       dialog.value = !dialog.value;
@@ -58,7 +58,7 @@ function onSubmitPass() {
   } else {
     props.cashbook[props.year] = {
       [form.month]: {
-        total: form.total,
+        budget: form.budget,
         surplus: 0
       }
     };
@@ -96,8 +96,8 @@ for (let i = 0; i < 12; i++) {
           <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
         </el-select>
       </el-form-item>
-      <el-form-item label="本月总预算" prop="total">
-        <el-input type="number" clearable :prefix-icon="Coin" v-model="form.total" />
+      <el-form-item label="本月总预算" prop="budget">
+        <el-input type="number" clearable :prefix-icon="Coin" v-model="form.budget" />
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">创建</el-button>

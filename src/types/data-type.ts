@@ -6,7 +6,7 @@ export interface IOutlay {
 
 export interface IMonth {
   show?: boolean;
-  total?: number;
+  budget?: number;
   surplus?: number;
   outlays?: IOutlay[];
 }

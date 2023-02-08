@@ -13,7 +13,7 @@ const years = Object.keys(props.cashbook).map(x => {
   return { value: x, label: `${x} 年` };
 });
 const options = ref(years);
-const selYear = ref(years[0].value);
+const selYear = ref(years[0]?.value);
 
 const emits = defineEmits(["change"]);
 
