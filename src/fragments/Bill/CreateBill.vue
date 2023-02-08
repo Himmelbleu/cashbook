@@ -2,15 +2,15 @@
 import { PropType } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Coin } from "@element-plus/icons-vue";
-import { validateMoney, onSubmit } from "../helpers/form-helper";
-import { Bill } from "../types/data-type";
+import { validateMoney, onSubmit } from "../../helpers/form-helper";
+import { Bill } from "../../types/data-type";
 
 const props = defineProps({
   year: {
     type: String,
     required: true
   },
-  bill: {
+  cashbook: {
     type: Object as PropType<Bill>,
     required: true
   }
@@ -27,9 +27,9 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  if (props.bill[props.year]) {
+  if (props.cashbook[props.year]) {
     let hasMontKey = false;
-    const montKeys = Object.keys(props.bill[props.year]);
+    const montKeys = Object.keys(props.cashbook[props.year]);
 
     if (montKeys) {
       montKeys.forEach(ele => {
@@ -45,7 +45,7 @@ function onSubmitPass() {
         message: "已有该月的账单，不要重复添加！"
       });
     } else {
-      props.bill[props.year][form.month] = {
+      props.cashbook[props.year][form.month] = {
         total: form.total,
         surplus: 0
       };
@@ -56,7 +56,7 @@ function onSubmitPass() {
       });
     }
   } else {
-    props.bill[props.year] = {
+    props.cashbook[props.year] = {
       [form.month]: {
         total: form.total,
         surplus: 0

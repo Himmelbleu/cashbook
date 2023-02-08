@@ -2,12 +2,12 @@
 import { useStorage, useNow, useDateFormat } from "@vueuse/core";
 import { Bill } from "../types/data-type";
 
+const cashbook = useStorage<Bill>("cashbook", {});
 const year = ref(useDateFormat(useNow(), "YYYY").value);
-const bill = useStorage<Bill>("bill", {});
-const keys = Object.keys(bill.value[year.value] || []);
+const keys = Object.keys(cashbook.value[year.value] || []);
 
 function calcSurplus(montKey: string) {
-  const nowMont = bill.value[year.value][montKey];
+  const nowMont = cashbook.value[year.value][montKey];
   let totalSurplus = 0;
   nowMont.outlays?.forEach(ele => {
     totalSurplus += Number(ele.cost);
@@ -17,7 +17,7 @@ function calcSurplus(montKey: string) {
 }
 
 function calcRealSurplus(montKey: string) {
-  const nowMont = bill.value[year.value][montKey];
+  const nowMont = cashbook.value[year.value][montKey];
   let realTotalSurplus = 0;
   let isFirstMonth = false;
 
@@ -29,7 +29,7 @@ function calcRealSurplus(montKey: string) {
 
   if (!isFirstMonth) {
     const nowIndex = keys.findIndex(ele => ele == montKey);
-    const preMont = bill.value[year.value][keys[nowIndex - 1]];
+    const preMont = cashbook.value[year.value][keys[nowIndex - 1]];
     if (preMont?.surplus && nowMont?.surplus) {
       realTotalSurplus = Number(preMont.surplus) + Number(nowMont.surplus);
     }
@@ -45,17 +45,17 @@ function change(val: number) {
 <template>
   <div class="main">
     <div class="menus mt-6">
-      <ChooseYear @change="change" :year="year" />
+      <ChooseYear @change="change" :cashbook="cashbook" :year="year" />
       <div class="mt-6">
-        <CreateBill :bill="bill" :year="year" />
+        <CreateBill :cashbook="cashbook" :year="year" />
       </div>
     </div>
     <div class="content">
-      <template v-for="(val, key, i) in bill[year]" :key="i">
-        <div class="item card fsz-1.2 mt-6 px-3 pb-6 pt-2">
+      <template v-for="(val, key, i) in cashbook[year]" :key="i">
+        <div class="item card mt-6 px-3 pb-6 pt-2">
           <div class="bill-head">
             <div class="mb-4 f-c-b">
-              <div class="month fsz-1.4">{{ key }} 月</div>
+              <div class="month fsz-1.2">{{ key }} 月</div>
               <el-dropdown trigger="click">
                 <div class="f-c-c">
                   <div class="mr-1 sec-color">操作</div>
@@ -64,13 +64,13 @@ function change(val: number) {
                 <template #dropdown>
                   <div class="my-2">
                     <div class="f-c-c">
-                      <AddOutlay :bill="bill" :year="year" :month="key" />
+                      <AddOutlay :cashbook="cashbook" :year="year" :month="key" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <UpdateBill :bill="bill" :year="year" :month="key" :index="i" />
+                      <UpdateBill :cashbook="cashbook" :year="year" :month="key" :index="i" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <DeleteBill :bill="bill" :year="year" :month="key" />
+                      <DeleteBill :cashbook="cashbook" :year="year" :month="key" />
                     </div>
                   </div>
                 </template>
@@ -103,10 +103,10 @@ function change(val: number) {
                   <template #dropdown>
                     <div class="my-2">
                       <div class="f-c-c">
-                        <UpdateOutlay :bill="bill" :outlay="item" :index="j" :year="year" :month="key" />
+                        <UpdateOutlay :cashbook="cashbook" :outlay="item" :index="j" :year="year" :month="key" />
                       </div>
                       <div class="f-c-c mt-2">
-                        <DeleteOutlay :bill="bill" :index="j" :year="year" :month="key" />
+                        <DeleteOutlay :cashbook="cashbook" :index="j" :year="year" :month="key" />
                       </div>
                     </div>
                   </template>
@@ -116,8 +116,8 @@ function change(val: number) {
           </div>
           <div class="bill-bott mt-6 f-c-e">
             <div>
-              <div class="mb-2 sec-color">本月剩余：{{ calcSurplus(key) }}</div>
-              <div v-html="calcRealSurplus(key) ? '实际剩余：' + calcRealSurplus(key) : ''" />
+              <div class="text-right mb-2 sec-color">本月剩余：{{ calcSurplus(key) }}</div>
+              <div v-html="calcRealSurplus(key) ? '本月和上月共剩余：' + calcRealSurplus(key) : ''" />
             </div>
           </div>
         </div>

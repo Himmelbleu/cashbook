@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { Bill } from "../types/data-type";
+import { Bill } from "../../types/data-type";
 
 const props = defineProps({
-  bill: {
+  cashbook: {
     type: Object as PropType<Bill>,
     required: true
   },
@@ -18,7 +18,7 @@ const props = defineProps({
 });
 
 function confirm() {
-  Reflect.deleteProperty(props.bill[props.year], props.month);
+  Reflect.deleteProperty(props.cashbook[props.year], props.month);
   ElMessage({
     type: "success",
     message: "删除成功！"

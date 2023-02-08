@@ -2,11 +2,11 @@
 import { PropType } from "vue";
 import { Coin, Discount, ChatDotRound } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { IOutlay, Bill } from "../types/data-type";
-import { validateMoney, onSubmit } from "../helpers/form-helper";
+import { IOutlay, Bill } from "../../types/data-type";
+import { validateMoney, onSubmit } from "../../helpers/form-helper";
 
 const props = defineProps({
-  bill: {
+  cashbook: {
     type: Object as PropType<Bill>,
     required: true
   },
@@ -36,7 +36,7 @@ const form = reactive(<IOutlay>props.outlay);
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  props.bill[props.year][props.month].outlays![props.index] = form;
+  props.cashbook[props.year][props.month].outlays![props.index] = form;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",

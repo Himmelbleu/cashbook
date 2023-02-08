@@ -2,11 +2,11 @@
 import { PropType } from "vue";
 import { Coin } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { Bill } from "../types/data-type";
-import { validateMoney, onSubmit } from "../helpers/form-helper";
+import { Bill } from "../../types/data-type";
+import { validateMoney, onSubmit } from "../../helpers/form-helper";
 
 const props = defineProps({
-  bill: {
+  cashbook: {
     type: Object as PropType<Bill>,
     required: true
   },
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const dialog = ref(false);
 const form = reactive({
-  total: props.bill[props.year][props.month].total
+  total: props.cashbook[props.year][props.month].total
 });
 const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
@@ -34,7 +34,7 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  props.bill[props.year][props.month].total = form.total;
+  props.cashbook[props.year][props.month].total = form.total;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",

@@ -17,7 +17,7 @@ import { presetAttributify, presetUno } from "unocss";
 import transformerDirective from "@unocss/transformer-directives";
 
 export default defineConfig({
-  base: "/bills/",
+  base: "/cashbook/",
   plugins: [
     vue(),
     vueJsx(),

@@ -7,15 +7,14 @@ export {}
 
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
-    AddOutlay: typeof import('./src/fragments/AddOutlay.vue')['default']
-    BillMain: typeof import('./src/fragments/BillMain.vue')['default']
-    CabinetContent: typeof import('./src/fragments/CabinetContent.vue')['default']
-    ChooseYear: typeof import('./src/fragments/ChooseYear.vue')['default']
-    CreateBill: typeof import('./src/fragments/CreateBill.vue')['default']
-    DeleteBill: typeof import('./src/fragments/DeleteBill.vue')['default']
-    DeleteOutlay: typeof import('./src/fragments/DeleteOutlay.vue')['default']
-    LeftMenu: typeof import('./src/fragments/LeftMenu.vue')['default']
-    UpdateBill: typeof import('./src/fragments/UpdateBill.vue')['default']
-    UpdateOutlay: typeof import('./src/fragments/UpdateOutlay.vue')['default']
+    AddOutlay: typeof import('./src/fragments/Outlay/AddOutlay.vue')['default']
+    Cabinet: typeof import('./src/fragments/Cabinet.vue')['default']
+    ChooseYear: typeof import('./src/fragments/Bill/ChooseYear.vue')['default']
+    CreateBill: typeof import('./src/fragments/Bill/CreateBill.vue')['default']
+    DeleteBill: typeof import('./src/fragments/Bill/DeleteBill.vue')['default']
+    DeleteOutlay: typeof import('./src/fragments/Outlay/DeleteOutlay.vue')['default']
+    Main: typeof import('./src/fragments/Main.vue')['default']
+    UpdateBill: typeof import('./src/fragments/Bill/UpdateBill.vue')['default']
+    UpdateOutlay: typeof import('./src/fragments/Outlay/UpdateOutlay.vue')['default']
   }
 }
