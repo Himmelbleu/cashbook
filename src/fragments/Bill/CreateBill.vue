@@ -3,7 +3,7 @@ import { PropType } from "vue";
 import type { FormInstance, FormRules } from "element-plus";
 import { Coin } from "@element-plus/icons-vue";
 import { validateMoney, onSubmit } from "../../helpers/form-helper";
-import { Bill } from "../../types/data-type";
+import { ICashbook } from "../../types/data-type";
 
 const props = defineProps({
   year: {
@@ -11,7 +11,7 @@ const props = defineProps({
     required: true
   },
   cashbook: {
-    type: Object as PropType<Bill>,
+    type: Object as PropType<ICashbook>,
     required: true
   }
 });
@@ -87,24 +87,26 @@ for (let i = 0; i < 12; i++) {
 </script>
 
 <template>
-  <el-button @click="dialog = !dialog">创建账单</el-button>
-  <el-dialog v-model="dialog" title="创建账单" width="90%">
-    <div class="mb-6">当前创建的账单对应的月份：{{ form.month }}</div>
-    <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
-      <el-form-item label="账单的月份" prop="month">
-        <el-select v-model="form.month" placeholder="Select">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="本月总预算" prop="budget">
-        <el-input type="number" clearable :prefix-icon="Coin" v-model="form.budget" />
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">创建</el-button>
-        <el-button @click="dialog = !dialog">取消</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+  <div>
+    <el-button @click="dialog = !dialog">创建账单</el-button>
+    <el-dialog v-model="dialog" title="创建账单" width="90%">
+      <div class="mb-6">当前创建的账单对应的月份：{{ form.month }}</div>
+      <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
+        <el-form-item label="账单的月份" prop="month">
+          <el-select v-model="form.month" placeholder="Select">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="本月总预算" prop="budget">
+          <el-input type="number" clearable :prefix-icon="Coin" v-model="form.budget" />
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit(formInst, onSubmitPass, onSubmitError)">创建</el-button>
+          <el-button @click="dialog = !dialog">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+  </div>
 </template>
 
 <style scoped lang="scss"></style>

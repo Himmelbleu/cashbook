@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { PropType } from "vue";
-import { Bill } from "../../types/data-type";
+import { ICashbook } from "../../types/data-type";
 
 const props = defineProps({
   cashbook: {
-    type: Object as PropType<Bill>,
+    type: Object as PropType<ICashbook>,
     required: true
   },
   year: {

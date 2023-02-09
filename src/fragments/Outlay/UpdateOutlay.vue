@@ -2,12 +2,12 @@
 import { PropType } from "vue";
 import { Coin, Discount, ChatDotRound } from "@element-plus/icons-vue";
 import type { FormInstance, FormRules } from "element-plus";
-import { IOutlay, Bill } from "../../types/data-type";
+import { IOutlay, ICashbook } from "../../types/data-type";
 import { validateMoney, onSubmit } from "../../helpers/form-helper";
 
 const props = defineProps({
   cashbook: {
-    type: Object as PropType<Bill>,
+    type: Object as PropType<ICashbook>,
     required: true
   },
   year: {

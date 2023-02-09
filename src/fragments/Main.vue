@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { useStorage, useNow, useDateFormat } from "@vueuse/core";
-import { Bill } from "../types/data-type";
+import { ICashbook, ICabinet } from "../types/data-type";
 
-const cashbook = useStorage<Bill>("cashbook", {});
+const cashbook = useStorage<ICashbook>("cashbook", {});
+const cabinet = useStorage<ICabinet>("cabinet", {});
 const year = ref(useDateFormat(useNow(), "YYYY").value);
+const show = ref(false);
 const montKs = Object.keys(cashbook.value[year.value] || []);
 
 const calcSurplus = computed(() => (k: string) => {
@@ -37,18 +39,23 @@ const calcSurplus = computed(() => (k: string) => {
   return surplus;
 });
 
-function change(val: number) {
-  year.value = val + "";
+function importJson(cashbook: ICashbook) {
+  cashbook.value = cashbook;
+}
+
+function changeYear(newYear: string) {
+  year.value = newYear;
 }
 </script>
 
 <template>
   <div class="main">
+    <div class="header f-c-b">
+      <TextIcon icon="operation" @click="show = !show" :icon-size="2" :text-size="1" />
+      <div class="fsz-1.4">{{ cabinet.name }} 的账本</div>
+    </div>
     <div class="menus mt-6">
-      <ChooseYear @change="change" :cashbook="cashbook" :year="year" />
-      <div class="mt-6">
-        <CreateBill :cashbook="cashbook" :year="year" />
-      </div>
+      <CreateBill :cashbook="cashbook" :year="year" />
     </div>
     <div class="content">
       <template v-for="(v, k, i) in cashbook[year]" :key="i">
@@ -118,6 +125,14 @@ function change(val: number) {
         </div>
       </template>
     </div>
+    <div class="cabinet absolute top-0 left-0" :class="{ 'z-99': show, 'z--1': !show }">
+      <div class="relative">
+        <div class="content bg p-4 w-60vw absolute top-0 left-0" :class="{ bg: show }">
+          <SideView @change-year="changeYear" @import-json="importJson" :cashbook="cashbook" :cabinet="cabinet" />
+        </div>
+        <div @click="show = !show" class="modal w-40vw absolute top-0 left-60vw"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -129,5 +144,14 @@ function change(val: number) {
     style: solid;
     radius: 0.6rem;
   }
+}
+
+.cabinet .content,
+.cabinet .modal {
+  height: 100vh;
+}
+
+.cabinet .modal {
+  background-color: rgba(30, 30, 30, 0.5);
 }
 </style>
