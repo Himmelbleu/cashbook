@@ -39,8 +39,8 @@ const calcSurplus = computed(() => (k: string) => {
   return surplus;
 });
 
-function importJson(cashbook: ICashbook) {
-  cashbook.value = cashbook;
+function importJson(newCashbook: ICashbook) {
+  cashbook.value = newCashbook;
 }
 
 function changeYear(newYear: string) {
