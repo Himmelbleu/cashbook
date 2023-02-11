@@ -4,12 +4,12 @@ import { ICashbook, ICabinet } from "../types/data-type";
 
 const cashbook = useStorage<ICashbook>("cashbook", {});
 const cabinet = useStorage<ICabinet>("cabinet", {});
-const year = ref(useDateFormat(useNow(), "YYYY").value);
-const show = ref(false);
-const montKs = Object.keys(cashbook.value[year.value] || []);
+const nowYear = ref(useDateFormat(useNow(), "YYYY").value);
+const isDisplayModal = ref(false);
+const montKeys = Object.keys(cashbook.value[nowYear.value] || []);
 
-const calcSurplus = computed(() => (k: string) => {
-  const nowMont = cashbook.value[year.value][k];
+const calcSurplus = computed(() => (key: string) => {
+  const nowMont = cashbook.value[nowYear.value][key];
   let isFirstMonth = false;
   let expenses = 0;
   let surplus = 0;
@@ -18,8 +18,8 @@ const calcSurplus = computed(() => (k: string) => {
     expenses += Number(ele.cost);
   });
 
-  montKs.forEach((ele, index) => {
-    if (k == ele && index == 0) {
+  montKeys.forEach((ele, index) => {
+    if (key == ele && index == 0) {
       isFirstMonth = true;
     }
   });
@@ -27,16 +27,16 @@ const calcSurplus = computed(() => (k: string) => {
   surplus = Number(nowMont.budget) - expenses;
 
   if (!isFirstMonth) {
-    const nowK = montKs.findIndex(ele => ele == k);
-    const preMont = cashbook.value[year.value][montKs[nowK - 1]];
+    const nowK = montKeys.findIndex(ele => ele == key);
+    const preMont = cashbook.value[nowYear.value][montKeys[nowK - 1]];
     if (preMont?.surplus && nowMont?.budget) {
       surplus = Number(nowMont.budget) - expenses + Number(preMont.surplus);
     }
   }
 
-  nowMont.surplus = surplus;
+  nowMont.surplus = Number(surplus.toFixed(2));
 
-  return surplus;
+  return nowMont.surplus;
 });
 
 function importJson(newCashbook: ICashbook) {
@@ -44,21 +44,21 @@ function importJson(newCashbook: ICashbook) {
 }
 
 function changeYear(newYear: string) {
-  year.value = newYear;
+  nowYear.value = newYear;
 }
 </script>
 
 <template>
   <div class="main">
     <div class="header f-c-b">
-      <TextIcon icon="operation" @click="show = !show" :icon-size="2" :text-size="1" />
+      <TextIcon icon="operation" @click="isDisplayModal = !isDisplayModal" :icon-size="2" :text-size="1" />
       <div class="fsz-1.4">{{ cabinet.name }} 的账本</div>
     </div>
     <div class="menus mt-6">
-      <CreateBill :cashbook="cashbook" :year="year" />
+      <CreateBill :cashbook="cashbook" :year="nowYear" />
     </div>
     <div class="content">
-      <template v-for="(v, k, i) in cashbook[year]" :key="i">
+      <template v-for="(v, k, i) in cashbook[nowYear]" :key="i">
         <div class="item card mt-6 px-3 pb-6 pt-2">
           <div class="bill-head">
             <div class="mb-4 f-c-b">
@@ -71,13 +71,13 @@ function changeYear(newYear: string) {
                 <template #dropdown>
                   <div class="my-2">
                     <div class="f-c-c">
-                      <AddOutlay :cashbook="cashbook" :year="year" :month="k" />
+                      <AddOutlay :cashbook="cashbook" :year="nowYear" :month="k" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <UpdateBill :cashbook="cashbook" :year="year" :month="k" :index="i" />
+                      <UpdateBill :cashbook="cashbook" :year="nowYear" :month="k" :index="i" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <DeleteBill :cashbook="cashbook" :year="year" :month="k" />
+                      <DeleteBill :cashbook="cashbook" :year="nowYear" :month="k" />
                     </div>
                   </div>
                 </template>
@@ -110,10 +110,10 @@ function changeYear(newYear: string) {
                   <template #dropdown>
                     <div class="my-2">
                       <div class="f-c-c">
-                        <UpdateOutlay :cashbook="cashbook" :outlay="item" :index="j" :year="year" :month="k" />
+                        <UpdateOutlay :cashbook="cashbook" :outlay="item" :index="j" :year="nowYear" :month="k" />
                       </div>
                       <div class="f-c-c mt-2">
-                        <DeleteOutlay :cashbook="cashbook" :index="j" :year="year" :month="k" />
+                        <DeleteOutlay :cashbook="cashbook" :index="j" :year="nowYear" :month="k" />
                       </div>
                     </div>
                   </template>
@@ -125,12 +125,12 @@ function changeYear(newYear: string) {
         </div>
       </template>
     </div>
-    <div class="cabinet absolute top-0 left-0" :class="{ 'z-99': show, 'z--1': !show }">
+    <div class="cabinet absolute top-0 left-0" :class="{ 'z-99': isDisplayModal, 'z--1': !isDisplayModal }">
       <div class="relative">
-        <div class="content bg p-4 w-60vw absolute top-0 left-0" :class="{ bg: show }">
+        <div class="content bg p-4 w-60vw absolute top-0 left-0" :class="{ bg: isDisplayModal }">
           <SideView @change-year="changeYear" @import-json="importJson" :cashbook="cashbook" :cabinet="cabinet" />
         </div>
-        <div @click="show = !show" class="modal w-40vw absolute top-0 left-60vw"></div>
+        <div @click="isDisplayModal = !isDisplayModal" class="modal w-40vw absolute top-0 left-60vw"></div>
       </div>
     </div>
   </div>
