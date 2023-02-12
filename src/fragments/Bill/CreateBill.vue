@@ -6,7 +6,7 @@ import { validateMoney, onSubmit } from "../../helpers/form-helper";
 import { ICashbook } from "../../types/data-type";
 
 const props = defineProps({
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
@@ -27,9 +27,9 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  if (props.cashbook[props.year]) {
+  if (props.cashbook[props.nowYear]) {
     let hasMontKey = false;
-    const montKeys = Object.keys(props.cashbook[props.year]);
+    const montKeys = Object.keys(props.cashbook[props.nowYear]);
 
     if (montKeys) {
       montKeys.forEach(ele => {
@@ -45,7 +45,7 @@ function onSubmitPass() {
         message: "已有该月的账单，不要重复添加！"
       });
     } else {
-      props.cashbook[props.year][form.month] = {
+      props.cashbook[props.nowYear][form.month] = {
         budget: form.budget,
         surplus: 0
       };
@@ -56,7 +56,7 @@ function onSubmitPass() {
       });
     }
   } else {
-    props.cashbook[props.year] = {
+    props.cashbook[props.nowYear] = {
       [form.month]: {
         budget: form.budget,
         surplus: 0

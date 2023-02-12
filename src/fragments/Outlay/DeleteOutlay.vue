@@ -7,22 +7,22 @@ const props = defineProps({
     type: Object as PropType<ICashbook>,
     required: true
   },
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
-  month: {
+  nowMonth: {
     type: String,
     required: true
   },
-  index: {
+  outlayIndex: {
     type: Number,
     required: true
   }
 });
 
 function confirm() {
-  props.cashbook[props.year][props.month].outlays?.splice(props.index, 1);
+  props.cashbook[props.nowYear][props.nowMonth].outlays?.splice(props.outlayIndex, 1);
   ElMessage({
     type: "success",
     message: "删除成功！"
@@ -32,7 +32,11 @@ function confirm() {
 
 <template>
   <div>
-    <el-popconfirm @confirm="confirm" confirm-button-text="确定" cancel-button-text="取消" title="确定删除该支出项？">
+    <el-popconfirm
+      @confirm="confirm"
+      confirm-button-text="确定"
+      cancel-button-text="取消"
+      title="确定删除该支出项？">
       <template #reference>
         <el-button @click="" size="small" type="primary" text>删除支出</el-button>
       </template>

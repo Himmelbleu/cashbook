@@ -38,30 +38,40 @@ const importJson: UploadProps["onChange"] = async file => {
   }
 };
 
-const years = Object.keys(props.cashbook).map(x => {
+const yearList = Object.keys(props.cashbook).map(x => {
   return { value: x, label: `${x} 年` };
 });
-const options = ref(years);
-const selYear = ref(years[0]?.value);
+const options = ref(yearList);
+const selectedYear = ref(yearList[0]?.value);
 
 function changeYear() {
-  emits("changeYear", selYear.value);
+  emits("changeYear", selectedYear.value);
 }
 </script>
 
 <template>
-  <div class="fsz-1.4 mb-4">账本信息</div>
-  <el-input class="mb-4" v-model="name" placeholder="请输入记账本持有者" />
-  <el-button plain class="mb-4" @click="update" type="primary">更新</el-button>
-  <div class="fsz-1.4 mb-4">数据管理</div>
-  <el-button class="mb-4" plain type="primary" @click="exportJson">导出账本数据</el-button>
-  <el-upload class="mb-4" :limit="1" :auto-upload="false" :on-change="importJson">
-    <el-button plain type="primary">导入账本数据</el-button>
-  </el-upload>
-  <div class="fsz-1.4 mb-4">账本年份</div>
-  <el-select @change="changeYear" v-model="selYear" placeholder="Select">
-    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-  </el-select>
+  <div class="mb-4">
+    <div class="fsz-1.4 mb-4">账本信息</div>
+    <el-input class="mb-4" v-model="name" placeholder="请输入记账本持有者" />
+    <el-button plain @click="update" type="primary">更新</el-button>
+  </div>
+  <div class="mb-4">
+    <div class="fsz-1.4 mb-4">数据管理</div>
+    <el-button class="mb-4" plain type="primary" @click="exportJson">导出账本数据</el-button>
+    <el-upload :limit="1" :auto-upload="false" :on-change="importJson">
+      <el-button plain type="primary">导入账本数据</el-button>
+    </el-upload>
+  </div>
+  <div class="mb-4">
+    <div class="fsz-1.4 mb-4">账本年份</div>
+    <el-select @change="changeYear" v-model="selectedYear" placeholder="Select">
+      <el-option
+        v-for="item in options"
+        :key="item.value"
+        :label="item.label"
+        :value="item.value" />
+    </el-select>
+  </div>
 </template>
 
 <style scoped lang="scss"></style>

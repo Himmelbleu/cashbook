@@ -10,11 +10,11 @@ const props = defineProps({
     type: Object as PropType<ICashbook>,
     required: true
   },
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
-  month: {
+  nowMonth: {
     type: String,
     required: true
   }
@@ -32,7 +32,7 @@ const form = reactive(<IOutlay>{
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  const montBill = props.cashbook[props.year][props.month];
+  const montBill = props.cashbook[props.nowYear][props.nowMonth];
   if (!montBill.outlays) montBill.outlays = [];
   montBill.outlays.push(form);
   dialog.value = !dialog.value;
@@ -54,7 +54,7 @@ function onSubmitError() {
   <div>
     <el-button @click="dialog = !dialog" size="small" type="primary" text>添加支出</el-button>
     <el-dialog v-model="dialog" title="添加支出项" width="90%">
-      <div class="mb-6">当前账单对应的月份：{{ month }}</div>
+      <div class="mb-6">当前账单对应的月份：{{ nowMonth }}</div>
       <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
         <el-form-item label="标签" prop="label">
           <el-input type="text" placeholder="请输入标签" clearable :prefix-icon="Discount" v-model="form.label" />

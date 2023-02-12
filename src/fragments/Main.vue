@@ -5,38 +5,38 @@ import { ICashbook, ICabinet } from "../types/data-type";
 const cashbook = useStorage<ICashbook>("cashbook", {});
 const cabinet = useStorage<ICabinet>("cabinet", {});
 const nowYear = ref(useDateFormat(useNow(), "YYYY").value);
-const isDisplayModal = ref(false);
-const montKeys = Object.keys(cashbook.value[nowYear.value] || []);
+const isDisModal = ref(false);
+const monthKeys = Object.keys(cashbook.value[nowYear.value] || []);
 
-const calcSurplus = computed(() => (key: string) => {
-  const nowMont = cashbook.value[nowYear.value][key];
+const calcSurplus = computed(() => (monthKey: string) => {
+  const nowMonth = cashbook.value[nowYear.value][monthKey];
   let isFirstMonth = false;
   let expenses = 0;
   let surplus = 0;
 
-  nowMont.outlays?.forEach(ele => {
+  nowMonth.outlays?.forEach(ele => {
     expenses += Number(ele.cost);
   });
 
-  montKeys.forEach((ele, index) => {
-    if (key == ele && index == 0) {
+  monthKeys.forEach((element, index) => {
+    if (monthKey == element && index == 0) {
       isFirstMonth = true;
     }
   });
 
-  surplus = Number(nowMont.budget) - expenses;
+  surplus = Number(nowMonth.budget) - expenses;
 
   if (!isFirstMonth) {
-    const nowK = montKeys.findIndex(ele => ele == key);
-    const preMont = cashbook.value[nowYear.value][montKeys[nowK - 1]];
-    if (preMont?.surplus && nowMont?.budget) {
-      surplus = Number(nowMont.budget) - expenses + Number(preMont.surplus);
+    const nowMonthKey = monthKeys.findIndex(ele => ele == monthKey);
+    const preMonth = cashbook.value[nowYear.value][monthKeys[nowMonthKey - 1]];
+    if (preMonth?.surplus && nowMonth?.budget) {
+      surplus = Number(nowMonth.budget) - expenses + Number(preMonth.surplus);
     }
   }
 
-  nowMont.surplus = Number(surplus.toFixed(2));
+  nowMonth.surplus = Number(surplus.toFixed(2));
 
-  return nowMont.surplus;
+  return nowMonth.surplus;
 });
 
 function importJson(newCashbook: ICashbook) {
@@ -51,18 +51,18 @@ function changeYear(newYear: string) {
 <template>
   <div class="main">
     <div class="header f-c-b">
-      <TextIcon icon="operation" @click="isDisplayModal = !isDisplayModal" :icon-size="2" :text-size="1" />
+      <TextIcon icon="operation" @click="isDisModal = !isDisModal" :icon-size="2" :text-size="1" />
       <div class="fsz-1.4">{{ cabinet.name }} 的账本</div>
     </div>
     <div class="menus mt-6">
-      <CreateBill :cashbook="cashbook" :year="nowYear" />
+      <CreateBill :cashbook="cashbook" :now-year="nowYear" />
     </div>
     <div class="content">
-      <template v-for="(v, k, i) in cashbook[nowYear]" :key="i">
+      <template v-for="(monthVal, monthKey, billIndex) in cashbook[nowYear]" :key="i">
         <div class="item card mt-6 px-3 pb-6 pt-2">
           <div class="bill-head">
             <div class="mb-4 f-c-b">
-              <div class="month fsz-1.2">{{ k }} 月</div>
+              <div class="month fsz-1.2">{{ monthKey }} 月</div>
               <el-dropdown trigger="click">
                 <div class="f-c-c">
                   <div class="mr-1 sec-color">操作</div>
@@ -71,23 +71,27 @@ function changeYear(newYear: string) {
                 <template #dropdown>
                   <div class="my-2">
                     <div class="f-c-c">
-                      <AddOutlay :cashbook="cashbook" :year="nowYear" :month="k" />
+                      <AddOutlay :cashbook="cashbook" :now-year="nowYear" :now-month="monthKey" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <UpdateBill :cashbook="cashbook" :year="nowYear" :month="k" :index="i" />
+                      <UpdateBill
+                        :cashbook="cashbook"
+                        :now-year="nowYear"
+                        :now-month="monthKey"
+                        :bill-index="billIndex" />
                     </div>
                     <div class="f-c-c mt-2">
-                      <DeleteBill :cashbook="cashbook" :year="nowYear" :month="k" />
+                      <DeleteBill :cashbook="cashbook" :now-year="nowYear" :now-month="monthKey" />
                     </div>
                   </div>
                 </template>
               </el-dropdown>
             </div>
-            <div class="total f-c-b fsz-1.2">预算：{{ v.budget }}</div>
+            <div class="total f-c-b fsz-1.2">预算：{{ monthVal.budget }}</div>
           </div>
           <div class="bill-body mt-6">
             <div class="outlay-head mb-6">
-              <div v-if="v.outlays && v.outlays.length" class="f-c-b">
+              <div v-if="monthVal.outlays && monthVal.outlays.length" class="f-c-b">
                 <div class="w-15% sec-color">标签</div>
                 <div class="w-45% sec-color">备注</div>
                 <div class="w-25% sec-color">金额</div>
@@ -95,12 +99,15 @@ function changeYear(newYear: string) {
               </div>
               <div v-else class="fsz-1.2 f-c-c sec-color">没有开支</div>
             </div>
-            <div class="outlay mb-6 f-c-b" v-for="(item, j) in v.outlays" :key="j">
+            <div
+              class="outlay-body mb-6 f-c-b"
+              v-for="(outlay, outlayIndex) in monthVal.outlays"
+              :key="outlayIndex">
               <div class="w-15%">
-                <el-tag v-if="item.label">{{ item.label }}</el-tag>
+                <el-tag v-if="outlay.label">{{ outlay.label }}</el-tag>
               </div>
-              <div class="w-45%">{{ item.text }}</div>
-              <div class="w-25%">{{ item.cost }}</div>
+              <div class="w-45%">{{ outlay.text }}</div>
+              <div class="w-25%">{{ outlay.cost }}</div>
               <div class="w-15% f-c-c">
                 <el-dropdown trigger="click">
                   <div class="f-c-c">
@@ -110,10 +117,19 @@ function changeYear(newYear: string) {
                   <template #dropdown>
                     <div class="my-2">
                       <div class="f-c-c">
-                        <UpdateOutlay :cashbook="cashbook" :outlay="item" :index="j" :year="nowYear" :month="k" />
+                        <UpdateOutlay
+                          :cashbook="cashbook"
+                          :outlay="outlay"
+                          :outlay-index="outlayIndex"
+                          :now-year="nowYear"
+                          :now-month="monthKey" />
                       </div>
                       <div class="f-c-c mt-2">
-                        <DeleteOutlay :cashbook="cashbook" :index="j" :year="nowYear" :month="k" />
+                        <DeleteOutlay
+                          :cashbook="cashbook"
+                          :outlay-index="outlayIndex"
+                          :now-year="nowYear"
+                          :now-month="monthKey" />
                       </div>
                     </div>
                   </template>
@@ -121,16 +137,22 @@ function changeYear(newYear: string) {
               </div>
             </div>
           </div>
-          <div class="bill-bott mt-6 f-c-e text-right sec-color">本月剩余：{{ calcSurplus(k) }}</div>
+          <div class="bill-bott mt-6 f-c-e text-right sec-color">
+            本月剩余：{{ calcSurplus(monthKey) }}
+          </div>
         </div>
       </template>
     </div>
-    <div class="cabinet absolute top-0 left-0" :class="{ 'z-99': isDisplayModal, 'z--1': !isDisplayModal }">
+    <div class="cabinet absolute top-0 left-0" :class="{ 'z-99': isDisModal, 'z--1': !isDisModal }">
       <div class="relative">
-        <div class="content bg p-4 w-60vw absolute top-0 left-0" :class="{ bg: isDisplayModal }">
-          <SideView @change-year="changeYear" @import-json="importJson" :cashbook="cashbook" :cabinet="cabinet" />
+        <div class="content bg p-4 w-60vw absolute top-0 left-0" :class="{ bg: isDisModal }">
+          <SideView
+            @change-year="changeYear"
+            @import-json="importJson"
+            :cashbook="cashbook"
+            :cabinet="cabinet" />
         </div>
-        <div @click="isDisplayModal = !isDisplayModal" class="modal w-40vw absolute top-0 left-60vw"></div>
+        <div @click="isDisModal = !isDisModal" class="modal w-40vw absolute top-0 left-60vw"></div>
       </div>
     </div>
   </div>

@@ -10,15 +10,15 @@ const props = defineProps({
     type: Object as PropType<ICashbook>,
     required: true
   },
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
-  month: {
+  nowMonth: {
     type: String,
     required: true
   },
-  index: {
+  billIndex: {
     type: Number,
     required: true
   }
@@ -26,7 +26,7 @@ const props = defineProps({
 
 const dialog = ref(false);
 const form = reactive({
-  total: props.cashbook[props.year][props.month].budget
+  total: props.cashbook[props.nowYear][props.nowMonth].budget
 });
 const rule = reactive<FormRules>({
   total: [{ validator: validateMoney, trigger: "change" }]
@@ -34,7 +34,7 @@ const rule = reactive<FormRules>({
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  props.cashbook[props.year][props.month].budget = form.total;
+  props.cashbook[props.nowYear][props.nowMonth].budget = form.total;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",
@@ -54,7 +54,7 @@ function onSubmitError() {
   <div>
     <el-button text type="primary" size="small" @click="dialog = !dialog">修改账单</el-button>
     <el-dialog v-model="dialog" title="创建账单" width="90%">
-      <div class="mb-6">当前修改的账单对应的月份：{{ month }}</div>
+      <div class="mb-6">当前修改的账单对应的月份：{{ nowMonth }}</div>
       <el-form ref="formInst" :model="form" :rules="rule" label-position="left">
         <el-form-item label="本月总预算" prop="total">
           <el-input type="number" clearable :prefix-icon="Coin" v-model="form.total" />

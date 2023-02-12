@@ -10,11 +10,11 @@ const props = defineProps({
     type: Object as PropType<ICashbook>,
     required: true
   },
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
-  month: {
+  nowMonth: {
     type: String,
     required: true
   },
@@ -22,7 +22,7 @@ const props = defineProps({
     type: Object as PropType<IOutlay>,
     required: true
   },
-  index: {
+  outlayIndex: {
     type: Number,
     required: true
   }
@@ -36,7 +36,7 @@ const form = reactive(<IOutlay>props.outlay);
 const formInst = ref<FormInstance>();
 
 function onSubmitPass() {
-  props.cashbook[props.year][props.month].outlays![props.index] = form;
+  props.cashbook[props.nowYear][props.nowMonth].outlays![props.outlayIndex] = form;
   dialog.value = !dialog.value;
   ElMessage({
     type: "success",

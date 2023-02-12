@@ -7,18 +7,18 @@ const props = defineProps({
     type: Object as PropType<ICashbook>,
     required: true
   },
-  year: {
+  nowYear: {
     type: String,
     required: true
   },
-  month: {
+  nowMonth: {
     type: String,
     required: true
   }
 });
 
 function confirm() {
-  Reflect.deleteProperty(props.cashbook[props.year], props.month);
+  Reflect.deleteProperty(props.cashbook[props.nowYear], props.nowMonth);
   ElMessage({
     type: "success",
     message: "删除成功！"
